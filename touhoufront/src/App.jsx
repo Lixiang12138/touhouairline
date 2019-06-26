@@ -41,7 +41,7 @@ export default class App extends React.Component {
       /*case pageList.register:
         return (<RegisterPage success={() => this.gotoLogin()} />);*/
       case pageList.aboard:
-        return (<FlightPage />);
+        return (<FlightnoPage />);
 
       case pageList.login:
         return (<LoginPage changeLoginStatus={(val, usr, nic) => this.changeLoginStatus(val, usr, nic)} />);
