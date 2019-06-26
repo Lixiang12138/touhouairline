@@ -10,4 +10,5 @@ public final class DomainUserInfoConsts {
     public static final String PASSENGER_TYPE_ERROR = "请选择旅客类型";
     public static final String PASSENGER_SEX_ERROR = "请选择旅客性别";
     public static final String PASSENGER_NOT_FOUND_ERROR = "未找到旅客";
+    public static final String PASSENGER_NOT_FOUND = "您没有常用旅客信息";
 }

@@ -1,15 +1,16 @@
 package com.ecust.touhouairline.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.ecust.touhouairline.entity.UserEntityTmp;
+import com.ecust.touhouairline.entity.UserEntity;
 import com.ecust.touhouairline.service.LoginService;
+import com.ecust.touhouairline.utils.ResultWithSingleMessage;
 import com.ecust.touhouairline.utils.SingleMessageResult;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 public class LoginController {
@@ -17,18 +18,22 @@ public class LoginController {
     LoginService loginService;
 
     @RequestMapping(value = "login",method = RequestMethod.POST)
-    public ModelMap login(String username, String password){
-        loginService.Login(username,password,true);
-        return null;
+    public ModelMap login(@RequestBody Map<String,Object> params){
+        ModelMap map = new ModelMap();
+        ResultWithSingleMessage result = loginService.Login(params.get("username").toString(),params.get("password").toString(),true);
+        map.put("result",result);
+        return map;
     }
 
-    @RequestMapping(value = "register",method = RequestMethod.POST)
-    public ModelMap register(String userEntityTmpJson){
+    @PostMapping(value = "register")
+    public ModelMap register(@RequestBody Map<String,Object> params){
         ModelMap map = new ModelMap();
-        UserEntityTmp userEntityTmp = JSON.parseObject(userEntityTmpJson,UserEntityTmp.class);
-        SingleMessageResult result = loginService.register(userEntityTmp);
-        map.put("success",result.isSuccess());
-        map.put("message",result.getMessage());
+        System.out.println(params);
+        String out = JSON.toJSONString(params);
+        System.out.println(out);
+        UserEntity userEntity = JSON.parseObject(out,UserEntity.class);
+        SingleMessageResult result = loginService.register(userEntity);
+        map.put("result",result);
         return map;
     }
 }

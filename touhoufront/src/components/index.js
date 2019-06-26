@@ -1,0 +1,1 @@
+export { test_1 } from './axios/AxiosGet'; 

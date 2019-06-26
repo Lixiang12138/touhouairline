@@ -124,4 +124,19 @@ public class UserEntity implements Serializable {
   public void setPassengersByUserNo(Collection<PassengerEntity> passengersByUserNo) {
     this.passengersByUserNo = passengersByUserNo;
   }
+
+  @Override
+  public String toString() {
+    return "UserEntity{" +
+            "userName='" + userName + '\'' +
+            ", password='" + password + '\'' +
+            ", userPhone='" + userPhone + '\'' +
+            ", email='" + email + '\'' +
+            ", nickName='" + nickName + '\'' +
+            ", credit=" + credit +
+            ", characterByUserNo=" + characterByUserNo +
+            ", ordermastersByUserNo=" + ordermastersByUserNo +
+            ", passengersByUserNo=" + passengersByUserNo +
+            '}';
+  }
 }

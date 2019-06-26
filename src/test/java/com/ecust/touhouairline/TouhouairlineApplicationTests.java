@@ -1,11 +1,9 @@
 package com.ecust.touhouairline;
 
-import com.ecust.touhouairline.entity.UserEntityTmp;
-import com.ecust.touhouairline.service.LoginService;
-import javafx.application.Application;
+import com.alibaba.fastjson.JSON;
+import com.ecust.touhouairline.entity.UserEntity;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -15,6 +13,4 @@ public class TouhouairlineApplicationTests {
     @Test
     public void contextLoads() {
     }
-
-
 }

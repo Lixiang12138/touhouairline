@@ -3,17 +3,12 @@ package com.ecust.touhouairline.service;
 import com.ecust.touhouairline.consts.LoginConsts;
 import com.ecust.touhouairline.entity.CharacterEntity;
 import com.ecust.touhouairline.entity.UserEntity;
-import com.ecust.touhouairline.entity.UserEntityTmp;
 import com.ecust.touhouairline.repository.CharacterRepository;
 import com.ecust.touhouairline.repository.UserRepository;
-import com.ecust.touhouairline.utils.Result;
 import com.ecust.touhouairline.utils.ResultWithSingleMessage;
 import com.ecust.touhouairline.utils.SingleMessageResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author 姚迟亮
@@ -56,30 +51,27 @@ public class LoginService {
         }
     }
 
-
-
     /**
-     * @param userEntityTmp 封装好的用户信息
+     * @param userEntity 封装好的用户信息
      * @return 成功返回success,失败返回失败原因
      */
-    public SingleMessageResult register(UserEntityTmp userEntityTmp){
-        SingleMessageResult checkUser = checkUserWhenRegister(userEntityTmp);
+    public SingleMessageResult register(UserEntity userEntity){
+        SingleMessageResult checkUser = checkUserWhenRegister(userEntity);
         if (checkUser.isSuccess()){
             CharacterEntity characterEntity = characterReopository.findByCharacterName("客户");
-            userEntityTmp.setCharacterEntity(characterEntity);
-            userRepository.save(userEntityTmp.getUserEntity());
+            userEntity.setCharacterByUserNo(characterEntity);
+            userRepository.save(userEntity);
             return new SingleMessageResult(true,LoginConsts.SUCCESS);
         }
         else return checkUser;
     }
 
-    private SingleMessageResult checkUserWhenRegister(UserEntityTmp user){
-        if (userRepository.existsById(user.getUsername())) return new SingleMessageResult(false,LoginConsts.USERNAME_EXISTS_ERROR);
+    private SingleMessageResult checkUserWhenRegister(UserEntity user){
+        if (userRepository.existsById(user.getUserName())) return new SingleMessageResult(false,LoginConsts.USERNAME_EXISTS_ERROR);
         if (user.getPassword().length() < 6 || user.getPassword().length() > 33) new SingleMessageResult(false,LoginConsts.PASSWORD_LENGTH_ERROR);
-        if (!user.getPassword().equals(user.getPasswordAgain())) new SingleMessageResult(false,LoginConsts.PASSWORD_NOT_SAME_ERROR);
-        if (user.getNickname().isEmpty()) new SingleMessageResult(false,LoginConsts.NICKNAME_ERROR);
+        if (user.getNickName().isEmpty()) new SingleMessageResult(false,LoginConsts.NICKNAME_ERROR);
         if (user.getEmail().isEmpty()) return new SingleMessageResult(false,LoginConsts.EMAIL_ERROR);
-        if (user.getPhone().isEmpty()) new SingleMessageResult(false,LoginConsts.PHONE_ERROR);
+        if (user.getUserPhone().isEmpty()) new SingleMessageResult(false,LoginConsts.PHONE_ERROR);
         return new SingleMessageResult(true,null);
     }
 
