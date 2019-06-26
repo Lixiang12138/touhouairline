@@ -23,7 +23,8 @@ class LoginPage extends React.Component {
     super(props);
     this.state = {
       username: "",
-      password: ""
+      password: "",
+      errorMessage: ""
     };
   }
 
@@ -36,9 +37,9 @@ class LoginPage extends React.Component {
   }
 
   handleClick = () => {
-    const state = this.state;
     const usn = this.state.username;
     const pwd = this.state.password;
+    const _this = this;
     const props = this.props;
     axios.post('login', {
       username: usn,
@@ -46,20 +47,25 @@ class LoginPage extends React.Component {
     })
       .then(function (response) {
         let data = response.data.result;
+
         if (data.success == true) {
           props.changeLoginStatus(true, data.object.userName, data.object.nickName);
+          _this.setState({errorMessage:""});
+        } else {
+          _this.setState({errorMessage:"用户名或密码错误！"});
         }
       })
   }
 
   render() {
     return (
-      <div className="App">
+      <div style={{textAlign:"center",marginLeft:"30%",marginRight:"30%"}}>
         <div>
           <TextField label="用户名" onChange={e => this.handleInputChange('username', e.target.value)} />
-          <TextField label="密码" onChange={e => this.handleInputChange('password', e.target.value)} />
-          <PrimaryButton onClick={this.handleClick}>登录</PrimaryButton>
+          <TextField label="密码" type="password" onChange={e => this.handleInputChange('password', e.target.value)} />
+          <PrimaryButton style={{marginTop:"16px"}} onClick={this.handleClick}>登录</PrimaryButton>
         </div>
+        <div style={{color:"red"}}>{this.state.errorMessage}</div>
       </div>
     );
   }

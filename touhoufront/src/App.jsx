@@ -8,16 +8,19 @@ import {
 } from 'antd';
 const { Header, Footer, Sider, Content } = Layout;
 import 'antd/dist/antd.css';
+import { Route, Switch, BrowserRouter as Router } from 'react-router-dom';
 
 import LoginPage from './views/loginpage/LoginPage';
 import RegisterPage from './views/loginpage/RegisterPage';
+import SearchPage from './views/searchpage/SearchPage';
 import './App.css';
-import WrappedSearchPage  from './views/searchpage/SearchPage';
 
 const pageList = {
   register: 'register',
   home: 'home',
   login: 'login',
+  vip: 'vip',
+  aboard: 'aboard',
   search: 'search'
 }
 
@@ -28,15 +31,28 @@ export default class App extends React.Component {
       userName: "",
       nickName: "",
       loginStatus: false,
-      pageName: pageList.home,
-      showLoginPart: false
+      pageName: pageList.home
     };
   }
 
   getPage() {
     switch (this.state.pageName) {
       case pageList.register:
-        return (<RegisterPage success={()=>this.gotoLogin()} />);
+        return (<RegisterPage success={() => this.gotoLogin()} />);
+
+      case pageList.login:
+        return (<LoginPage changeLoginStatus={(val, usr, nic) => this.changeLoginStatus(val, usr, nic)} />);
+
+      case pageList.vip:
+        return this.state.loginStatus
+          ? undefined
+          : (<LoginPage changeLoginStatus={(val, usr, nic) => this.changeLoginStatus(val, usr, nic)} />);
+
+      case pageList.search:
+        return (<SearchPage userName={this.state.userName} />)
+
+      default:
+        return undefined;
     }
   }
 
@@ -46,28 +62,15 @@ export default class App extends React.Component {
       userName: usr,
       nickName: nic
     });
+    if (this.state.loginStatus && (this.state.pageName == pageList.login)) {
+      this.setState({ pageName: pageList.home });
+    }
   }
 
   gotoLogin() {
     this.setState({
-      showLoginPart: true,
       pageName: pageList.login
     });
-  }
-
-  hideLogin() {
-    this.setState({
-      showLoginPart: false
-    })
-  }
-
-  checkout() {
-    this.setState({
-      userName: "",
-      nickName: "",
-      loginStatus: false,
-      showLoginPart: false
-    })
   }
 
   render() {
@@ -88,50 +91,37 @@ export default class App extends React.Component {
         </ul>
       );
 
-    const loginPart = !this.state.loginStatus && this.state.showLoginPart && (this.state.pageName == pageList.login)
-      ? (
-        <LoginPage changeLoginStatus={(val, usr, nic) => this.changeLoginStatus(val, usr, nic)} />
-      )
-      : undefined;
-
-    const pagePart = this.getPage();
-
     return (
       <Layout className="layout" style={{ background: '#FFFFFF' }}>
         <Header style={{}}>
-          <li style={{color:'#FFFFFF',float:'left', listStyle: 'none'}}>TouHou Airline</li>
+          <li style={{ color: '#FFFFFF', float: 'left', listStyle: 'none' }}>TouHou Airline</li>
           <Menu
             theme="dark"
             mode="horizontal"
-            defaultSelectedKeys={['2']}
-            style={{ lineHeight: '64px', marginLeft: '60%'}}
+            defaultSelectedKeys={['1']}
+            style={{ lineHeight: '64px', marginLeft: '60%' }}
           >
             <Menu.Item key="1">
-              <Link to="/touhouairline_Web_exploded/" onClick={() => this.hideLogin()}>首页</Link>
+              <Link to="/touhouairline_Web_exploded/" onClick={() => this.setState({ pageName: pageList.home })}>首页</Link>
             </Menu.Item>
             <Menu.Item key="2">
-              <Link to="/touhouairline_Web_exploded/" onClick={() => this.hideLogin()}>航班信息</Link>
+              <Link to="/touhouairline_Web_exploded/search" onClick={() => this.setState({ pageName: pageList.search })}>航班查询</Link>
             </Menu.Item>
             <Menu.Item key="3">
-              <Link to="/touhouairline_Web_exploded/" onClick={() => this.hideLogin()}>在线值机</Link>
+              <Link to="/touhouairline_Web_exploded/aboard" onClick={() => this.setState({ pageName: pageList.aboard })}>在线值机</Link>
             </Menu.Item>
             <Menu.Item key="4">
-              <Link to="/touhouairline_Web_exploded/" onClick={() => this.gotoLogin()}>会员服务</Link>
+              <Link to="/touhouairline_Web_exploded/vip" onClick={() => this.setState({ pageName: pageList.vip })}>会员服务</Link>
             </Menu.Item>
           </Menu>
         </Header>
         <Layout>
-          <Sider theme="light" style={{background:'#F0F0F0'}}>
-            //TODO: add side list menu for this slider
-          </Sider>
           <Layout>
             <Content style={{ lineHeight: '32px', textAlign: 'right', background: '#FFFFFF' }}>
               {loginTitle}
             </Content>
             <Content style={{ background: '#FFFFFF' }}>
-              {loginPart}
-              {loginPart==undefined?pagePart:undefined}
-              <WrappedSearchPage/>
+              {this.getPage()}
             </Content>
           </Layout>
         </Layout>
