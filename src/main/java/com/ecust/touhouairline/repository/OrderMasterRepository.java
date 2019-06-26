@@ -9,7 +9,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Repository
-public interface OrderMasterRepository extends JpaRepository<OrderMasterEntity,String> {
+public interface OrderMasterRepository extends JpaRepository<OrderMasterEntity,Integer> {
     Collection<OrderMasterEntity> findAllByFlightByFlightNoAndStateIsNotIn(FlightEntity flightEntity, Collection<String> states);
     List<OrderMasterEntity> findAllByFlightByFlightNo(FlightEntity flightEntity);
 }

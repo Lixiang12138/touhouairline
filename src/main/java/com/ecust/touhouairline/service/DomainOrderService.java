@@ -38,6 +38,17 @@ public class DomainOrderService {
     private FlightRepository flightRepository;
     /**
      * 显示订单详情
+     * @param orderNo 订单id
+     * @return 订单详情的集合
+     */
+    public Result<Collection<OrderDetailEntity>> showOrderDetail(Integer orderNo){
+        if (!orderMasterRepository.existsById(orderNo)) return new Result<>(false,null);
+        OrderMasterEntity orderMaster = orderMasterRepository.getOne(orderNo);
+        return showOrderDetail(orderMaster);
+    }
+
+    /**
+     * 显示订单详情
      * @param orderMaster 订单
      * @return 订单详情的集合
      */
@@ -60,7 +71,13 @@ public class DomainOrderService {
         if(ticketClass.equals(OrderMasterConsts.ECONOMY_CLASS)){
             singleTicketPrice = orderMaster.getFlightByFlightNo().getEconomyPrice();
         }
-        System.out.println(singleTicketPrice);
+        else if(ticketClass.equals(OrderMasterConsts.PREMIUM_CLASS)){
+            singleTicketPrice = orderMaster.getFlightByFlightNo().getPremiumPrice();
+        }
+        else if(ticketClass.equals(OrderMasterConsts.FIRST_CLASS)){
+            singleTicketPrice = orderMaster.getFlightByFlightNo().getFirstPrice();
+        }
+        else return new SingleMessageResult(false,DomainOrderConsts.MONEY_NOT_MATCH_ERROR);
         for(OrderDetailEntity orderDetail : orderDetails){
             orderDetail.setState(OrderDetailConsts.BEFORE_CHECK_IN);
             if(orderDetail.getPassengerType().equals(OrderDetailConsts.ADULT)) {
@@ -68,8 +85,8 @@ public class DomainOrderService {
                 orderDetail.setFee(singleTicketPrice);
             }
             else{
-                sum += singleTicketPrice/ 2;
-                orderDetail.setFee(singleTicketPrice);
+                sum += singleTicketPrice / 2;
+                orderDetail.setFee(singleTicketPrice / 2);
             }
             orderDetail.setOrdermasterByOrderNo(orderMaster);
         }
@@ -83,11 +100,21 @@ public class DomainOrderService {
 
     /**
      *
+     * @param orderNo 订单id
+     * @return 订单退款金额和积分
+     */
+    public ResultWithSingleMessage<Collection<String>> cancelOrder(Integer orderNo){
+        if (!orderMasterRepository.existsById(orderNo)) return new ResultWithSingleMessage<>(false,null,DomainOrderConsts.ERROR);
+        OrderMasterEntity orderMaster = orderMasterRepository.getOne(orderNo);
+        return cancelOrder(orderMaster,false);
+    }
+
+    /**
+     *
      * @param orderMaster 订单实体
      * @return 订单退款金额和积分
      */
-    public ResultWithSingleMessage<Collection<String>> cancelOrder(OrderMasterEntity orderMaster){
-        orderMaster.setState(OrderMasterConsts.CANCELLED);
+    public ResultWithSingleMessage<Collection<String>> cancelOrder(OrderMasterEntity orderMaster,boolean bySystem){
         //取消订单应退钱款和积分
         int returnMoney = orderMaster.getSum();
         int returnCredit = orderMaster.getUsedCredit();
@@ -95,14 +122,18 @@ public class DomainOrderService {
         java.util.Date today = new java.util.Date();
         //如果是未付款订单，可以随时取消。
         if(state.equals(OrderMasterConsts.UNPAID)){
+            orderMaster.setState(OrderMasterConsts.CANCELLED);
+            orderMasterRepository.save(orderMaster);
             return new ResultWithSingleMessage<>(true,
                     Arrays.asList(Integer.toString(returnCredit),Integer.toString(returnMoney)),
                     DomainOrderConsts.CANCEL_SUCCESS);
         }
         else if(state.equals(OrderMasterConsts.PAID)){
+            orderMaster.setState(OrderMasterConsts.CANCELLED);
+            orderMasterRepository.save(orderMaster);
             //取消订单操作距离飞机起飞还有days天
-            long days = (orderMaster.getOrderDate().getTime() - today.getTime()) / 1000 / 60 / 60 / 24;
-            if(days <= 15){
+            long days = (orderMaster.getFlightByFlightNo().getDepartTime().getTime() - today.getTime()) / 1000 / 60 / 60 / 24;
+            if(days <= 15 && !bySystem){
                 //如果距离起飞半个月内取消订单收取50%手续费
                 returnMoney /= 2;
             }
@@ -117,6 +148,17 @@ public class DomainOrderService {
         else{
             return new ResultWithSingleMessage<>(false,null, DomainOrderConsts.ERROR);
         }
+    }
+
+    /**
+     *
+     * @param orderNo 接受需要付款的订单id
+     * @return 如果成功返回支付的金额和积分，否则返回失败信息
+     */
+    public ResultWithSingleMessage<Collection<String>> payOrder(Integer orderNo){
+        if (!orderMasterRepository.existsById(orderNo)) return new ResultWithSingleMessage<>(false,null,DomainOrderConsts.ERROR);
+        OrderMasterEntity orderMaster = orderMasterRepository.getOne(orderNo);
+        return payOrder(orderMaster);
     }
 
     /**
