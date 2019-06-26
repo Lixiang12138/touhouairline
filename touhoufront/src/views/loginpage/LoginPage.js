@@ -13,7 +13,8 @@ import {
   withAxios
 } from 'react-axios';
 import {
-  TextField, PrimaryButton
+  TextField, 
+  PrimaryButton
 } from 'office-ui-fabric-react';
 
 import '../../App.css';
@@ -30,7 +31,6 @@ class LoginPage extends React.Component {
 
 
   handleInputChange = (name, value) => {
-    console.log(value);
     this.setState({
       [name]: value
     });
@@ -49,7 +49,7 @@ class LoginPage extends React.Component {
         let data = response.data.result;
 
         if (data.success == true) {
-          props.changeLoginStatus(true, data.object.userName, data.object.nickName);
+          props.changeLoginStatus(true, data.object);
           _this.setState({errorMessage:""});
         } else {
           _this.setState({errorMessage:"用户名或密码错误！"});
@@ -60,6 +60,7 @@ class LoginPage extends React.Component {
   render() {
     return (
       <div style={{textAlign:"center",marginLeft:"30%",marginRight:"30%"}}>
+        <div style={{color:"red"}}>{this.props.message}</div>
         <div>
           <TextField label="用户名" onChange={e => this.handleInputChange('username', e.target.value)} />
           <TextField label="密码" type="password" onChange={e => this.handleInputChange('password', e.target.value)} />

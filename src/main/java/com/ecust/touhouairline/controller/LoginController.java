@@ -28,9 +28,7 @@ public class LoginController {
     @PostMapping(value = "register")
     public ModelMap register(@RequestBody Map<String,Object> params){
         ModelMap map = new ModelMap();
-        System.out.println(params);
         String out = JSON.toJSONString(params);
-        System.out.println(out);
         UserEntity userEntity = JSON.parseObject(out,UserEntity.class);
         SingleMessageResult result = loginService.register(userEntity);
         map.put("result",result);

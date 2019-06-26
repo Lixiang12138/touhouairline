@@ -10,8 +10,7 @@ const { Header, Footer, Sider, Content } = Layout;
 import 'antd/dist/antd.css';
 import { Route, Switch, BrowserRouter as Router } from 'react-router-dom';
 
-import LoginPage from './views/loginpage/LoginPage';
-import RegisterPage from './views/loginpage/RegisterPage';
+import {LoginPage,RegisterPage,VipPage,HomePage} from './views';
 import './App.css';
 
 const pageList = {
@@ -29,6 +28,7 @@ export default class App extends React.Component {
     this.state = {
       userName: "",
       nickName: "",
+      user:undefined,
       loginStatus: false,
       pageName: pageList.home
     };
@@ -40,12 +40,12 @@ export default class App extends React.Component {
         return (<RegisterPage success={() => this.gotoLogin()} />);
 
       case pageList.login:
-        return (<LoginPage changeLoginStatus={(val, usr, nic) => this.changeLoginStatus(val, usr, nic)} />);
+        return (<LoginPage changeLoginStatus={(val, usr) => this.changeLoginStatus(val, usr)} />);
 
       case pageList.vip:
         return this.state.loginStatus
-          ? undefined
-          : (<LoginPage changeLoginStatus={(val, usr, nic) => this.changeLoginStatus(val, usr, nic)} />);
+          ? (<VipPage user={this.state.user} changeLoginStatus={(val, usr) => this.changeLoginStatus(val, usr)}/>)
+          : (<LoginPage changeLoginStatus={(val, usr) => this.changeLoginStatus(val, usr)} message="请先登录！"/>);
 
       case pageList.search:
         return (<SearchPage userName={this.state.userName} />)
@@ -55,11 +55,12 @@ export default class App extends React.Component {
     }
   }
 
-  changeLoginStatus(val, usr, nic) {
+  changeLoginStatus(val, usr) {
     this.setState({
       loginStatus: val,
-      userName: usr,
-      nickName: nic
+      userName: usr.usrName,
+      nickName: usr.nickName,
+      user:usr
     });
     if (this.state.loginStatus && (this.state.pageName == pageList.login)) {
       this.setState({ pageName: pageList.home });
