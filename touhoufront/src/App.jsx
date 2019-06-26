@@ -12,11 +12,13 @@ import 'antd/dist/antd.css';
 import LoginPage from './views/loginpage/LoginPage';
 import RegisterPage from './views/loginpage/RegisterPage';
 import './App.css';
+import WrappedSearchPage  from './views/searchpage/SearchPage';
 
 const pageList = {
   register: 'register',
   home: 'home',
-  login: 'login'
+  login: 'login',
+  search: 'search'
 }
 
 export default class App extends React.Component {
@@ -34,7 +36,7 @@ export default class App extends React.Component {
   getPage() {
     switch (this.state.pageName) {
       case pageList.register:
-        return (<RegisterPage />);
+        return (<RegisterPage success={()=>this.gotoLogin()} />);
     }
   }
 
@@ -81,7 +83,7 @@ export default class App extends React.Component {
       )
       : (
         <ul style={TitleLoginStyle}>
-          <li style={TitleLoginStyle} onClick={() => this.setState({ pageName: pageList.register })} success={()=>this.gotoLogin()}>注册</li>
+          <li style={TitleLoginStyle} onClick={() => this.setState({ pageName: pageList.register })}>注册</li>
           <li style={TitleLoginStyle} onClick={() => this.gotoLogin()}>|登录</li>
         </ul>
       );
@@ -129,6 +131,7 @@ export default class App extends React.Component {
             <Content style={{ background: '#FFFFFF' }}>
               {loginPart}
               {loginPart==undefined?pagePart:undefined}
+              <WrappedSearchPage/>
             </Content>
           </Layout>
         </Layout>
