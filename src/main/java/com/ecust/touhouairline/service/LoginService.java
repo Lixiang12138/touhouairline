@@ -60,6 +60,7 @@ public class LoginService {
         if (checkUser.isSuccess()){
             CharacterEntity characterEntity = characterReopository.findByCharacterName("客户");
             userEntity.setCharacterByUserNo(characterEntity);
+            userEntity.setCredit(0);
             userRepository.save(userEntity);
             return new SingleMessageResult(true,LoginConsts.SUCCESS);
         }

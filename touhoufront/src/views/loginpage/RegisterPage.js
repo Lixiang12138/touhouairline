@@ -42,7 +42,7 @@ class RegisterPage extends React.Component {
 		const props = this.props;
 		const _this = this;
 
-		axios.post('register', userEntity)
+		axios.post('register', {user:userEntity})
 			.then(function (response) {
 				const data = response.data.result;
 				if (data.success == true) {

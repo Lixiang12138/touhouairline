@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -40,25 +41,36 @@ public class DomainFlightInfoService {
         return new SingleMessageResult(true,DomainFlightInfoConsts.FLIGHT_CREATE_SUCCESS);
     }
 
-    public SingleMessageResult changeFlight(String flightNo,FlightEntity check){
+    public SingleMessageResult changeFlight(FlightEntity check){
         SingleMessageResult checkResult = checkFlight(check);
         if (!checkResult.isSuccess()) return checkResult;
-        if (!flightNo.equals(check.getFlightNo())) return new SingleMessageResult(false,DomainFlightInfoConsts.UNKNOWN_ERROR);
         check.setFlightState(FlightConsts.PREPARING);
         PlaneEntity plane = planeRepository.findByPlaneNo(check.getPlaneNo());
         check.setPlaneByPlaneNo(plane);
         if (!check.getFlightState().equals(FlightConsts.ARRIVED) && !check.getFlightState().equals(FlightConsts.CANCELED))
-            cancelOrdersByFlightNo(flightNo);
+            cancelOrdersByFlightNo(check.getFlightNo());
         flightRepository.save(check);
         return new SingleMessageResult(true,DomainFlightInfoConsts.FLIGHT_CHANGE_SUCCESS);
     }
 
-    public SingleMessageResult removeFlight(FlightEntity flight){
+    public SingleMessageResult deleteFlight(String flightNo){
+        if (!flightRepository.existsById(flightNo)) return new SingleMessageResult(false,DomainFlightInfoConsts.UNKNOWN_ERROR);
+        FlightEntity flight = flightRepository.getOne(flightNo);
+        return deleteFlight(flight);
+    }
+
+    public SingleMessageResult deleteFlight(FlightEntity flight){
         if (!flightRepository.existsById(flight.getPlaneNo())) return new SingleMessageResult(false,DomainFlightInfoConsts.UNKNOWN_ERROR);
         if (!flight.getFlightState().equals(FlightConsts.ARRIVED) && !flight.getFlightState().equals(FlightConsts.CANCELED))
             cancelOrdersByFlightNo(flight.getFlightNo());
         flightRepository.delete(flight);
         return new SingleMessageResult(true, DomainFlightInfoConsts.FLIGHT_DELETE_SUCCESS);
+    }
+
+    public SingleMessageResult changeFlightState(String flightNo,String state){
+        if (!flightRepository.existsById(flightNo)) return new SingleMessageResult(false,DomainFlightInfoConsts.UNKNOWN_ERROR);
+        FlightEntity flight = flightRepository.getOne(flightNo);
+        return changeFlightState(flight,state);
     }
 
     public SingleMessageResult changeFlightState(FlightEntity flight,String state){
@@ -69,12 +81,10 @@ public class DomainFlightInfoService {
         return new SingleMessageResult(true,DomainFlightInfoConsts.FLIGHT_STATUS_SUCCESS);
     }
 
-    //TODO:取消订单
     private void cancelOrdersByFlightNo(String flightNo){
-        Result<List<OrderMasterEntity>> result = new Result<>(true,null);
+        Result<Collection<OrderMasterEntity>> result = domainOrderService.getOrderMasterByFlight(flightNo);
         if (result.isSuccess()) {
-            List<OrderMasterEntity> orderMasterEntityList = new ArrayList<>();
-            orderMasterEntityList.forEach(u -> orderMasterEntityList.remove(u));
+            result.getObject().forEach(u -> domainOrderService.cancelOrder(u,true));
         }
     }
 
@@ -95,7 +105,7 @@ public class DomainFlightInfoService {
             return new SingleMessageResult(false,DomainFlightInfoConsts.PREMIUM_PRICE_ERROR);
         if (flight.getFirstPrice() == 0)
             return new SingleMessageResult(false,DomainFlightInfoConsts.FIRST_PRICE_ERROR);
-        if (flight.getPlaneNo().isEmpty() || planeRepository.existsById(flight.getPlaneNo()))
+        if (flight.getPlaneNo().isEmpty() || !planeRepository.existsById(flight.getPlaneNo()))
             return new SingleMessageResult(false,DomainFlightInfoConsts.PLANE_ERROR);
         return new SingleMessageResult(true,null);
     }

@@ -1,5 +1,6 @@
 /* eslint-disable */
 import React from 'react';
+import axios from 'axios';
 import {
   Button, Row, Col, Layout, Menu, Icon, Descriptions, Input
 } from 'antd';
@@ -19,7 +20,7 @@ export default class UserInfoPart extends React.Component {
       password: user.password,
       passwordAgain: user.password,
       email: user.email,
-      phone: user.phone,
+      userPhone: user.userPhone,
       nickName: user.nickName
     };
   }
@@ -31,31 +32,23 @@ export default class UserInfoPart extends React.Component {
   }
 
   changeUser = () => {
-    const userEntity = {
-      userName: this.state.userName,
-      password: this.state.password,
-      email: this.state.email,
-      userPhone: this.state.phone,
-      nickName: this.state.nickName
-    };
-    const props = this.props;
+    let userEntity = this.props.user;
+    userEntity.nickName = this.state.nickName;
+    userEntity.password = (this.state.password==this.state.passwordAgain)
+      ? this.state.password
+      : this.props.user.password;
+    userEntity.email = this.state.email;
+    userEntity.userPhone = this.state.userPhone;
+
     const _this = this;
 
-    axios.post('changeUserInfo', userEntity)
+    axios.post('change_user_info', {user:userEntity})
       .then(function (response) {
         const data = response.data.result;
         if (data.success == true) {
-          _this.setState({
-            showMessage: false,
-            errorMessage: ""
-          });
-          props.success();
-          alert("注册成功！请前往登录");
+          _this.props.changeLoginStatus(true, userEntity)
         } else {
-          _this.setState({
-            showMessage: true,
-            errorMessage: data.message
-          });
+          _this.setState({showChangeInfo:false})
         }
       })
   }
@@ -65,18 +58,18 @@ export default class UserInfoPart extends React.Component {
     const userInfo = this.state.showChangeInfo
       ? (
         <Content>
-          <TextField label="用户名(不可更改)" value={this.props.user.userName} disabled={true} />
-          <TextField label="昵称" value={this.props.user.nickName}
+          <TextField label="用户名(不可更改)" value={this.state.userName} disabled={true} />
+          <TextField label="昵称" value={this.state.nickName}
             onChange={e => this.handleInputChange('nickName', e.target.value)} />
           <TextField label="密码"
             onChange={e => this.handleInputChange('password', e.target.value)} />
           <TextField label="再次输入密码"
             onChange={e => this.handleInputChange('passwordAgain', e.target.value)} />
-          <TextField label="电子邮箱" value={this.props.user.email}
+          <TextField label="电子邮箱" value={this.state.email}
             onChange={e => this.handleInputChange('email', e.target.value)} />
-          <TextField label="电话" value={this.props.user.userPhone}
+          <TextField label="电话" value={this.state.userPhone}
             onChange={e => this.handleInputChange('userPhone', e.target.value)} />
-          <PrimaryButton style={{ marginTop: '16px' }} onClick={this.changeUser()}>提交</PrimaryButton>
+          <PrimaryButton style={{ marginTop: '16px' }} onClick={() => this.changeUser()}>提交</PrimaryButton>
         </Content>
       ) : (
         <Content>

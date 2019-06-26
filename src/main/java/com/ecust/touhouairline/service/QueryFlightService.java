@@ -16,10 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author 姚迟亮
@@ -52,6 +49,51 @@ public class QueryFlightService {
                 flightRepository.findFlightEntitiesByDepartTimeBetweenAndDepartPlaceEqualsAndDestinationEquals(
                         departTime,end,departPlace,destination);
         return new Result<>(!flights.isEmpty(),flights);
+    }
+
+    /**
+     * 查询来回机票
+     * @param departTime 出发时间
+     * @param returnTime 回程时间
+     * @param departPlace 出发地点
+     * @param destination 到达地点
+     * @param isOneWay 是否单程
+     * @return 返回出发当天和回程当天的航班列表
+     */
+    public Result<Map<String,Collection<FlightEntity>>> queryTwoWayTicket(
+            Timestamp departTime,Timestamp returnTime, String departPlace, String destination, boolean isOneWay){
+        //只查询一天内的机票
+        Timestamp end = (Timestamp)departTime.clone();
+        end.setHours(23);
+        end.setMinutes(59);
+        end.setSeconds(59);
+        Collection<FlightEntity> flights =
+                flightRepository.findFlightEntitiesByDepartTimeBetweenAndDepartPlaceEqualsAndDestinationEquals(
+                        departTime,end,departPlace,destination);
+        Map<String,Collection<FlightEntity>> map = new LinkedHashMap();
+        if (!flights.isEmpty()) map.put("depart",flights);
+        if (!isOneWay){
+            end = (Timestamp)returnTime.clone();
+            end.setHours(23);
+            end.setMinutes(59);
+            end.setSeconds(59);
+            Collection<FlightEntity> flightsReturn =
+                    flightRepository.findFlightEntitiesByDepartTimeBetweenAndDepartPlaceEqualsAndDestinationEquals(
+                            returnTime,end,destination,departPlace);
+            if (!flightsReturn.isEmpty()) map.put("return",flightsReturn);
+        }
+        return new Result<>(map.size() == (isOneWay ? 1 : 2),map);
+    }
+
+    /**
+     * 显示航班详情
+     * @param flightNo 航班号
+     * @return 三种舱位的位置数量
+     */
+    public Result<Map<String,Integer>> showDetailByFlight(String flightNo){
+        if(!flightRepository.existsById(flightNo)) return new Result<>(false,null);
+        FlightEntity flight = flightRepository.getOne(flightNo);
+        return showDetailByFlight(flight);
     }
 
     /**
