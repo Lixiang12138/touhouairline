@@ -12,6 +12,7 @@ import { Route, Switch, BrowserRouter as Router } from 'react-router-dom';
 
 import LoginPage from './views/loginpage/LoginPage';
 import FlightnoPage from './views/boardingpasspage/FlightnoPage';
+import FlightPage from './views/boardingpasspage/FlightPage';
 //import RegisterPage from './views/loginpage/RegisterPage';
 import './App.css';
 
@@ -40,7 +41,7 @@ export default class App extends React.Component {
       /*case pageList.register:
         return (<RegisterPage success={() => this.gotoLogin()} />);*/
       case pageList.aboard:
-        return (<FlightnoPage />);
+        return (<FlightPage />);
 
       case pageList.login:
         return (<LoginPage changeLoginStatus={(val, usr, nic) => this.changeLoginStatus(val, usr, nic)} />);
