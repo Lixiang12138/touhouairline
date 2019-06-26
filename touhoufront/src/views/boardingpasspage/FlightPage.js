@@ -15,7 +15,7 @@ class FlightPage extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            pageIndex:0,//1:插入 2：更新
+            pageIndex:4,//1:插入 2：更新
             returnTimeDisabled: true,
             Message:""
         };
@@ -144,6 +144,11 @@ class FlightPage extends React.Component {
         const _this = this;
         _this.setState({pageIndex:4,Message:""});
     }
+    GoToPageOne = e =>{
+        console.log("GoToPageOne");
+        const _this = this;
+        _this.setState({pageIndex:1,Message:""});
+    }
 
     GoToPageTwo = e =>{
         console.log("GoToPageTwo");
@@ -183,6 +188,14 @@ class FlightPage extends React.Component {
             return (
                 <Form {...formItemLayout} onSubmit={this.SearchFlight} labelAlign="left">
                     <Row>
+                        <br />
+                        <Col span={3} offset={4}>
+                            <Button block type="primary" style={{ height: "40px" }} onClick={this.GoToPageOne}>
+                                增加航班
+                            </Button>
+                        </Col>
+                    </Row>
+                    <Row>
                         <Col span={8} offset={4}>
                             查找航班:
                             <br/>
@@ -212,6 +225,14 @@ class FlightPage extends React.Component {
         if(this.state.pageIndex==0){
             return (
                 <Form {...formItemLayout} onSubmit={this.SearchFlight} labelAlign="left">
+                    <Row>
+                        <br />
+                        <Col span={3} offset={4}>
+                            <Button block type="primary" style={{ height: "40px" }} onClick={this.GoToPageOne}>
+                                增加航班
+                            </Button>
+                        </Col>
+                    </Row>
                     <Row>
                         <Col span={8} offset={4}>
                             查找航班:
@@ -254,6 +275,7 @@ class FlightPage extends React.Component {
         return (
             <Form {...formItemLayout} onSubmit={this.state.index==1?this.handleSubmit:this.handleUpdate} labelAlign="left">
                 <Row>
+
                     <Col span={8} offset={4}>
                         <Form.Item label="航班号">
                             {
@@ -344,7 +366,7 @@ class FlightPage extends React.Component {
                     </Col>
                     <Col span={2} offset={1}>
                         <Button block type="primary" style={{ height: "40px" }} htmlType="submit">
-                            {this.state.index==1?"插入":"更新"}
+                            {this.state.pageIndex==1?"插入":"更新"}
                         </Button>
                     </Col>
                     <Col span={2} offset={1}>
