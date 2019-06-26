@@ -28,7 +28,7 @@ public class DomainUserController {
     @PostMapping(value = "change_user_info")
     public ModelMap changeUserInfo(@RequestBody Map<String,Object> params){
         ModelMap map = new ModelMap();
-        UserEntity userEntity = JSON.parseObject((String)(params.get("user")),UserEntity.class);
+        UserEntity userEntity = JSON.parseObject(JSON.toJSONString((params.get("user"))),UserEntity.class);
         SingleMessageResult result = domainUserInfoService.changeUserInfo(userEntity);
         map.put("result",result);
         return map;
@@ -43,7 +43,7 @@ public class DomainUserController {
     public ModelMap addPassenger(@RequestBody Map<String,Object> params){
         ModelMap map = new ModelMap();
         String username = (String)params.get("userName");
-        PassengerEntity target = JSON.parseObject((String)params.get("passenger"),PassengerEntity.class);
+        PassengerEntity target = JSON.parseObject(JSON.toJSONString(params.get("passenger")),PassengerEntity.class);
         MultiMessageResult result = domainUserInfoService.addPassenger(username,target);
         map.put("result",result);
         return map;
@@ -59,7 +59,7 @@ public class DomainUserController {
     public ModelMap changePassenger(@RequestBody Map<String,Object> params){
         ModelMap map = new ModelMap();
         String username = (String)(params.get("userName"));
-        PassengerEntity target = JSON.parseObject((String)params.get("passenger"),PassengerEntity.class);
+        PassengerEntity target = JSON.parseObject(JSON.toJSONString(params.get("passenger")),PassengerEntity.class);
         MultiMessageResult result = domainUserInfoService.changePassenger(username,target);
         map.put("result",result);
         return map;

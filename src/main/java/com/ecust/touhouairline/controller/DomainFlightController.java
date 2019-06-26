@@ -22,7 +22,7 @@ public class DomainFlightController {
     @PostMapping(value = "add_flight")
     public ModelMap addFlight(@RequestBody Map<String,Object> params){
         ModelMap map = new ModelMap();
-        FlightEntity flight = JSON.parseObject((String)params.get("flight"),FlightEntity.class);
+        FlightEntity flight = JSON.parseObject(JSON.toJSONString(params.get("flight")),FlightEntity.class);
         SingleMessageResult result = domainFlightInfoService.addFlight(flight);
         map.put("result",result);
         return map;
@@ -35,7 +35,7 @@ public class DomainFlightController {
     @PostMapping(value = "change_flight")
     public ModelMap changeFlight(@RequestBody Map<String,Object> params){
         ModelMap map = new ModelMap();
-        FlightEntity flight = JSON.parseObject((String)params.get("flight"),FlightEntity.class);
+        FlightEntity flight = JSON.parseObject(JSON.toJSONString(params.get("flight")),FlightEntity.class);
         SingleMessageResult result = domainFlightInfoService.changeFlight(flight);
         map.put("result",result);
         return map;

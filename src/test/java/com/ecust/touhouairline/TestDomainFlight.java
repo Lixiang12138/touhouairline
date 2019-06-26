@@ -22,10 +22,10 @@ public class TestDomainFlight {
     @Test
     public void testAddFlight(){
         Map<String, Object> params = new LinkedHashMap<>();
-        params.put("flight","{\"arrivedTime\":1561553321000," +
-                "\"departPlace\":\"北京\"," +
-                "\"departTime\":1561466906000," +
-                "\"destination\":\"上海\"," +
+        params.put("flight","{\"arrivedTime\":1561639721000," +
+                "\"departPlace\":\"上海\"," +
+                "\"departTime\":1561639721000," +
+                "\"destination\":\"北京\"," +
                 "\"economyPrice\":114," +
                 "\"premiumPrice\":514," +
                 "\"firstPrice\":1919," +

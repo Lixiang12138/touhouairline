@@ -68,8 +68,8 @@ public class DomainOrderController {
     @PostMapping(value = "create_order")
     public ModelMap createOrder(@RequestBody Map<String,Object> params){
         ModelMap map = new ModelMap();
-        OrderMasterEntity orderMaster = JSON.parseObject((String)(params.get("orderMaster")),OrderMasterEntity.class);
-        List<OrderDetailEntity> orderDetail = JSON.parseArray((String)(params.get("orderDetail")),OrderDetailEntity.class);
+        OrderMasterEntity orderMaster = JSON.parseObject(JSON.toJSONString((params.get("orderMaster"))),OrderMasterEntity.class);
+        List<OrderDetailEntity> orderDetail = JSON.parseArray(JSON.toJSONString((params.get("orderDetail"))),OrderDetailEntity.class);
         SingleMessageResult result = domainOrderService.createOrder(orderMaster,orderDetail);
         map.put("result",result);
         return map;

@@ -46,7 +46,7 @@ public class QueryFlightService {
         end.setMinutes(59);
         end.setSeconds(59);
         Collection<FlightEntity> flights =
-                flightRepository.findFlightEntitiesByDepartTimeBetweenAndDepartPlaceEqualsAndDestinationEquals(
+                flightRepository.findAllByDepartTimeBetweenAndDepartPlaceEqualsAndDestinationEquals(
                         departTime,end,departPlace,destination);
         return new Result<>(!flights.isEmpty(),flights);
     }
@@ -68,7 +68,7 @@ public class QueryFlightService {
         end.setMinutes(59);
         end.setSeconds(59);
         Collection<FlightEntity> flights =
-                flightRepository.findFlightEntitiesByDepartTimeBetweenAndDepartPlaceEqualsAndDestinationEquals(
+                flightRepository.findAllByDepartTimeBetweenAndDepartPlaceEqualsAndDestinationEquals(
                         departTime,end,departPlace,destination);
         Map<String,Collection<FlightEntity>> map = new LinkedHashMap();
         if (!flights.isEmpty()) map.put("depart",flights);
@@ -78,7 +78,7 @@ public class QueryFlightService {
             end.setMinutes(59);
             end.setSeconds(59);
             Collection<FlightEntity> flightsReturn =
-                    flightRepository.findFlightEntitiesByDepartTimeBetweenAndDepartPlaceEqualsAndDestinationEquals(
+                    flightRepository.findAllByDepartTimeBetweenAndDepartPlaceEqualsAndDestinationEquals(
                             returnTime,end,destination,departPlace);
             if (!flightsReturn.isEmpty()) map.put("return",flightsReturn);
         }

@@ -10,6 +10,6 @@ import java.util.Collection;
 
 @Repository
 public interface FlightRepository extends JpaRepository<FlightEntity,String> {
-    Collection<FlightEntity> findFlightEntitiesByDepartTimeBetweenAndDepartPlaceEqualsAndDestinationEquals(
+    Collection<FlightEntity> findAllByDepartTimeBetweenAndDepartPlaceEqualsAndDestinationEquals(
             Timestamp departTime, Timestamp departTimeEnd, String departPlace, String destination);
 }

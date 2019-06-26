@@ -12,8 +12,9 @@ import { Route, Switch, BrowserRouter as Router } from 'react-router-dom';
 
 import LoginPage from './views/loginpage/LoginPage';
 import RegisterPage from './views/loginpage/RegisterPage';
-import SearchPage from './views/searchpage/SearchPage';
+//import SearchPage from './views/searchpage/SearchPage';
 import './App.css';
+import DesicoPage from './views/searchpage/DesicoPage';
 
 const pageList = {
   register: 'register',
@@ -49,7 +50,7 @@ export default class App extends React.Component {
           : (<LoginPage changeLoginStatus={(val, usr, nic) => this.changeLoginStatus(val, usr, nic)} />);
 
       case pageList.search:
-        return (<SearchPage userName={this.state.userName} />)
+        return (<DesicoPage/>)
 
       default:
         return undefined;

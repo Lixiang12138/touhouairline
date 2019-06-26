@@ -64,7 +64,7 @@ public class QueryFlightController {
         Timestamp departTime = stringToTimestamp((String)params.get("departTime"));
         Timestamp returnTime = stringToTimestamp((String)params.get("returnTime"));
         String departPlace = (String) params.get("departPlace");
-        String destination = (String) params.get("destination");
+        String destination = (String) params.get("arrivedPlace");
         Boolean isOneWay = (Boolean) params.get("isOneWay");
         Result result = queryFlightService.queryTwoWayTicket(departTime,returnTime,departPlace,destination,isOneWay);
         map.put("result",result);

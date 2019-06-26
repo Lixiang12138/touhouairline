@@ -11,7 +11,6 @@ import moment from 'moment'
 const { Header, Footer, Sider, Content } = Layout;
 import 'antd/dist/antd.css';
 
-
 class SearchPage extends React.Component {
   constructor(props) {
     super(props);
@@ -34,17 +33,19 @@ class SearchPage extends React.Component {
         const props = this.props;
         const _this = this;
         const datas = {
-          departure: {
-            departTime: values['departTime'],
-            returnTime: values['returnTime'],
-            departPlace: values['departPlace'],
-            arrivedPlace: values['destination'],
-            isOneWay: _this.state.returnTimeDisabled
-          }
+          departTime: values['departTime'],
+          returnTime: values['returnTime'],
+          departPlace: values['departPlace'],
+          arrivedPlace: values['destination'],
+          isOneWay: _this.state.returnTimeDisabled
         }
-        axios.post('query_one_way_ticket', datas)
+        axios.post('query_two_way_ticket', datas)
           .then(response => {
-            const data = response.data.result;
+            const resultSet = response.data.result;
+            if(resultSet.success){
+              console.log('准备跳转1')
+              props.changePage(1,resultSet.object.depart, _this.state.returnTimeDisabled);
+            }
           });
       }
     });
@@ -54,12 +55,12 @@ class SearchPage extends React.Component {
     const dateFormat = 'YYYY/MM/DD';
     const formItemLayout = {
       labelCol: {
-        xs: 8,
-        sm: 8
+        xs: 4,
+        sm: 4
       },
       wrapperCol: {
-        xs: 14,
-        sm: 10
+        xs: 8,
+        sm: 8
       }
     };
     const today = new moment(new Date(), dateFormat);

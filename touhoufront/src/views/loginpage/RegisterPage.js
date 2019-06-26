@@ -33,11 +33,15 @@ class RegisterPage extends React.Component {
 
 	handleClick = () => {
 		const userEntity = {
-			userName: this.state.userName,
-			password: this.state.password,
-			email: this.state.email,
-			userPhone: this.state.phone,
-			nickName: this.state.nickName
+			user:
+			{
+				userName: this.state.userName,
+				password: this.state.password,
+				email: this.state.email,
+				userPhone: this.state.phone,
+				nickName: this.state.nickName
+			}
+			
 		};
 		const props = this.props;
 		const _this = this;
@@ -46,12 +50,12 @@ class RegisterPage extends React.Component {
 			.then(function (response) {
 				const data = response.data.result;
 				if (data.success == true) {
+					props.success();
+					alert("注册成功！请前往登录");
 					_this.setState({
 						showMessage: false,
 						errorMessage: ""
 					});
-					props.success();
-					alert("注册成功！请前往登录");
 				} else {
 					_this.setState({
 						showMessage: true,
